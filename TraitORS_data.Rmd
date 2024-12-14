@@ -4,7 +4,9 @@ output: html_document
 date: "2024-11-18"
 ---
 
-Plot theme
+
+
+# Plot theme
 ```{r}
 # set a theme theme
 plottheme <-  theme_bw(base_size = 15)+
