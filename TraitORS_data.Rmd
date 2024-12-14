@@ -4,9 +4,22 @@ output: html_document
 date: "2024-11-18"
 ---
 
+# Contents
+1. Set Plot Theme
+2. Maximum Body Size Plot
+3. Distribution Bar Plot
+4. Body Size Bar Plot
+5. Migration Bar Plot
+6. Envirnmental Position Bar Plot
+7. Depth Range Bar Plot
+8. Feeding Mode Bar Plot
+9. Trophic Position Bar Plot
+10. Lifespan Bar Plot
+11. Sociability Bar Plot
+12. Diel Activity Pattern Bar Plot
+13. Age at Sexual Maturity
 
-
-# Plot theme
+# 1. Set Plot theme
 ```{r}
 # set a theme theme
 plottheme <-  theme_bw(base_size = 15)+
@@ -15,7 +28,7 @@ plottheme <-  theme_bw(base_size = 15)+
   theme(axis.title.x = element_text(vjust = -1))
 ```
 
-# Maximum body size plot
+# 2. Maximum body size plot
 ```{r}
 # Read dataset
 library(ggplot2)
@@ -35,7 +48,7 @@ ggplot(body.size, aes(x = Maximum.body.size, fill = trait)) +
 
 ```
 
-#Distribution Bar Plot
+# 3. Distribution Bar Plot
 ```{r}
 library(ggplot2)
 library(dplyr)
@@ -70,7 +83,7 @@ ggplot(plot_data, aes(x = Distribution, y = n, fill = Distribution)) +
   plottheme+ theme(legend.position = "none")
 ```
 
-# Body Size Bar Plot
+# 4. Body Size Bar Plot
 ```{r}
 #select body size
 body.size <- traits %>% select(ScientificName_accepted, Body.size)
@@ -117,7 +130,7 @@ ggplot(body_size_plot_data, aes(x = reorder(Body.size, -Number), y = Number, fil
 
 ```
 
-# Migration Bar Plot
+# 5. Migration Bar Plot
 ```{r}
 #read CSV file
 traits <- read.csv("traits.csv")
@@ -168,7 +181,7 @@ ggplot(Migration_plot_data, aes(x = reorder(Migration, -Number), y = Number, fil
 
 ```
 
-# Environmental Position Bar Plot
+# 6. Environmental Position Bar Plot
 ```{r}
 #read CSV
 traits <- read.csv("traits.csv")
@@ -214,7 +227,7 @@ ggplot(environmental_position_plot_data, aes(x = reorder(Environmental.position,
 
 ```
 
-# Depth Range Bar Plot
+# 7. Depth Range Bar Plot
 ```{r}
 #read CSV 
 traits <- read.csv("traits.csv")
@@ -263,7 +276,7 @@ ggplot(Depth_range_plot_data, aes(x = reorder(Depth.range, -Number), y = Number,
   plottheme+ theme(legend.position = "none")
 ```
 
-Feeding Mode Bar Plot
+# 8. Feeding Mode Bar Plot
 ```{r}
 #read CSV 
 traits <- read.csv("traits.csv")
@@ -312,7 +325,7 @@ ggplot(Feeding_mode_plot_data, aes(x = reorder(Feeding.mode, -Number), y = Numbe
   plottheme+ theme(legend.position = "none")
 ```
 
-# Trophic Position Bar Graph
+# 9. Trophic Position Bar Graph
 ```{r}
 #read CSV file
 traits <- read.csv("traits.csv")
@@ -361,7 +374,7 @@ ggplot(Trophic_position_plot_data, aes(x = reorder(Trophic.position, -Number), y
   plottheme+ theme(legend.position = "none")
 ```
 
-# Lifespan Bar Plot
+# 10. Lifespan Bar Plot
 ```{r}
 #read CSV 
 traits <- read.csv("traits.csv")
@@ -411,7 +424,7 @@ ggplot(Lifespan_plot_data, aes(x = reorder(Life.span, -Number), y = Number, fill
   plottheme+ theme(legend.position = "none")
 ```
 
-Sociability Bar Plot
+# 11. Sociability Bar Plot
 ```{r}
 #read CSV file
 traits <- read.csv("traits.csv")
@@ -459,7 +472,7 @@ ggplot(Sociability_plot_data, aes(x = reorder(Sociability, -Number), y = Number,
   plottheme+ theme(legend.position = "none")
 ```
 
-# Diel Activity Pattern Bar Graph
+# 12. Diel Activity Pattern Bar Graph
 ```{r}
 #read CSV file
 traits <- read.csv("traits.csv")
@@ -507,7 +520,7 @@ ggplot(Diel_activity_pattern_plot_data, aes(x = reorder(Diel.activity.pattern, -
   plottheme+ theme(legend.position = "none")
 ```
 
-# Age at Sexual Maturity Continuous Plot
+# 13. Age at Sexual Maturity Continuous Plot
 ```{r}
 library(ggplot2)
 
