@@ -1,0 +1,537 @@
+---
+title: "Seabird_TraitORS_Code "
+output: html_document
+date: "2024-11-18"
+---
+
+Plot theme
+```{r}
+# set a theme theme
+plottheme <-  theme_bw(base_size = 15)+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())+
+  theme(axis.title.y = element_text(vjust = 3)) +
+  theme(axis.title.x = element_text(vjust = -1))
+```
+
+# Maximum body size plot
+```{r}
+# Read dataset
+library(ggplot2)
+traits<-read.csv("traits.csv")
+
+# filter out max body size
+body.size <- traits %>% select(ScientificName_accepted, Maximum.body.size)
+
+# max body size column
+body.size$trait <- "Maximum.body.size"
+
+# Create the plot
+ggplot(body.size, aes(x = Maximum.body.size, fill = trait)) + 
+  geom_density(alpha = 0.4) + 
+  labs(x = "Maximum Body Size (mm)", y = "Density")+
+  plottheme+ theme(legend.position = "none")
+
+```
+
+#Distribution Bar Plot
+```{r}
+library(ggplot2)
+library(dplyr)
+
+# Categories
+desired_categories <- c("ocean basin/realms", "global", "regional", "local")
+
+# Filter for distribution
+filtered_data <- traits %>%
+  filter(Distribution %in% desired_categories)
+
+# Number species for each category
+plot_data <- filtered_data %>%
+  count(Distribution)
+
+# Create the bar chart
+ggplot(plot_data, aes(x = Distribution, y = n, fill = Distribution)) +
+  geom_bar(stat = "identity", color = "black") +
+  scale_fill_manual(
+    values = c("ocean basin/realms" = "#99B2DD", 
+               "global" = "#243E36", 
+               "regional" = "#7CA982", 
+               "local" = "#99B245")  
+  ) +
+  labs(
+    x = "Distribution",
+    y = "Number of Species",
+   title = NULL
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  plottheme+ theme(legend.position = "none")
+```
+
+# Body Size Bar Plot
+```{r}
+#select body size
+body.size <- traits %>% select(ScientificName_accepted, Body.size)
+
+# Separate by ';'
+body.size2 <- body.size %>% 
+  separate_rows(Body.size, sep = ";") %>%
+  mutate(Body.size = trimws(Body.size))
+
+#check columns
+colnames(body.size2)
+
+# number in each category
+body_size_plot_data <- body.size2 %>%
+  count(Body.size, name = "Number") %>%
+  arrange(desc(Number))
+
+# column names
+colnames(plot_data) <- c("BodySize", "Number")
+
+# Replace blanks with "no data"
+plot_data <- body.size2 %>%
+  mutate(Body.size = ifelse(Body.size == "" | is.na(Body.size), "no data", Body.size))
+
+# Create the bar chart
+ggplot(body_size_plot_data, aes(x = reorder(Body.size, -Number), y = Number, fill = Body.size)) +
+  geom_bar(stat = "identity", color = "black") +
+   scale_fill_manual(
+    values = c("100 - <1000 mm" = "#243E36", 
+               "1000 - <10000 mm" = "#7CA982",
+               "no data" = "#99B245")  
+  ) +
+  labs(
+    x = "Body Size Range",
+    y = "Number of Species",
+    title = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),  
+    legend.position = "none"
+  ) +
+  plottheme+ theme(legend.position = "none")
+
+```
+
+# Migration Bar Plot
+```{r}
+#read CSV file
+traits <- read.csv("traits.csv")
+
+#select migration
+Migration <- traits %>% select(ScientificName_accepted, Migration)
+
+# Separate by ';'
+Migration2 <- Migration %>% 
+  separate_rows(Migration, sep = ";") %>% 
+  mutate(Migration = trimws(Migration))
+
+# column names check
+colnames(Migration2)
+
+# number in each category
+Migration_plot_data <- Migration2 %>%
+  count(Migration, name = "Number") %>%
+  arrange(desc(Number))
+
+# column names
+colnames(Migration_plot_data) <- c("Migration", "Number")
+
+# Replace blanks with "no data"
+Migration_plot_data <- Migration_plot_data %>%
+  mutate(Migration = ifelse(Migration == "" | is.na(Migration), "no data", Migration))
+
+# Create the bar chart
+ggplot(Migration_plot_data, aes(x = reorder(Migration, -Number), y = Number, fill = Migration)) +
+  geom_bar(stat = "identity", color = "black") +
+  scale_fill_manual(
+    values = c("Horizontal" = "#243E36", 
+               "none" = "#7CA982",
+               "no data" = "#99B245")
+  ) +
+  labs(
+    x = "Migration",
+    y = "Number of Species",
+    title = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),  
+    legend.position = "none"
+  ) +
+  plottheme+ theme(legend.position = "none")
+
+
+```
+
+# Environmental Position Bar Plot
+```{r}
+#read CSV
+traits <- read.csv("traits.csv")
+
+#select environmental position
+Environmental_Position <- traits %>% select(ScientificName_accepted, Environmental.position)
+
+# Separate by ';'
+Environmental_Position2 <- Environmental_Position %>% 
+  separate_rows(Environmental.position, sep = ";") %>% # Trim extra spaces 
+  mutate(Environmental.position = trimws(Environmental.position))
+  
+# column names check
+colnames(Environmental_Position2)
+
+# number in each category
+environmental_position_plot_data <- Environmental_Position2 %>%
+  count(Environmental.position, name = "Number") %>%
+  arrange(desc(Number))
+
+# column names
+colnames(Environmental_Position2) <- c("Migration", "Number")
+
+# Create the bar chart
+ggplot(environmental_position_plot_data, aes(x = reorder(Environmental.position, -Number), y = Number, fill = Environmental.position)) +
+  geom_bar(stat = "identity", color = "black") +
+  scale_fill_manual(
+    values = c("Surface" = "#243E36", 
+               "Pelagic" = "#7CA982",
+               "Aerial" = "#99B245")
+  ) +
+  labs(
+    x = "Environmental Position",
+    y = "Number of Species",
+    title = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),  
+    legend.position = "none"
+  ) +
+  plottheme+ theme(legend.position = "none")
+
+```
+
+# Depth Range Bar Plot
+```{r}
+#read CSV 
+traits <- read.csv("traits.csv")
+
+#select depth range
+Depth_range <- traits %>% select(ScientificName_accepted, Depth.range)
+
+# Separate rows by ';'
+Depth_range2 <- Depth_range %>% 
+  separate_rows(Depth.range, sep = ";") %>% 
+  mutate(Depth.range = trimws(Depth.range))
+  
+# column names check
+colnames(Depth_range2)
+
+# number in each category
+Depth_range_plot_data <- Depth_range2 %>%
+  count(Depth.range, name = "Number") %>%
+  arrange(desc(Number))
+
+# column names
+colnames(Depth_range2) <- c("Depth.range", "Number")
+
+# Replace blanks with "No Data"
+Depth_range_plot_data <- Depth_range_plot_data %>%
+  mutate(Depth.range = ifelse(Depth.range == "" | is.na(Depth.range), "no data", Depth.range))
+
+# Create the bar chart
+ggplot(Depth_range_plot_data, aes(x = reorder(Depth.range, -Number), y = Number, fill = Depth.range)) +
+  geom_bar(stat = "identity", color = "black") +
+  scale_fill_manual(
+    values = c("0-50m" = "#243E36", 
+               "50-200m" = "#7CA982",
+               "no data" = "#99B245")
+  ) +
+  labs(
+    x = "Maximum Diving Depth Range",
+    y = "Number of Species",
+    title = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),  
+    legend.position = "none"
+  ) +
+  plottheme+ theme(legend.position = "none")
+```
+
+Feeding Mode Bar Plot
+```{r}
+#read CSV 
+traits <- read.csv("traits.csv")
+
+#select feeding mode
+Feeding_mode <- traits %>% select(ScientificName_accepted, Feeding.mode)
+
+# Separate rows by ';'
+Feeding_mode2 <- Feeding_mode %>% 
+  separate_rows(Feeding.mode, sep = ";") %>% 
+  mutate(Feeding.mode = trimws(Feeding.mode))
+  
+# column names check
+colnames(Feeding_mode2)
+
+# number in each category
+Feeding_mode_plot_data <- Feeding_mode2 %>%
+  count(Feeding.mode, name = "Number") %>%
+  arrange(desc(Number))
+
+# column names
+colnames(Feeding_mode2) <- c("Feeding.mode", "Number")
+
+# Replace blanks with "No Data"
+Feeding_mode_plot_data <- Feeding_mode_plot_data %>%
+  mutate(Feeding.mode = ifelse(Feeding.mode == "" | is.na(Feeding.mode), "no data", Feeding.mode))
+
+# Create the bar chart
+ggplot(Feeding_mode_plot_data, aes(x = reorder(Feeding.mode, -Number), y = Number, fill = Feeding.mode)) +
+  geom_bar(stat = "identity", color = "black") +
+  scale_fill_manual(
+    values = c("Predator" = "#243E36", 
+               "Scavenger" = "#7CA982",
+               "no data" = "#99B245")
+  ) +
+  labs(
+    x = "Feeding Mode",
+    y = "Number of Species",
+    title = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),  
+    legend.position = "none"
+  ) +
+  plottheme+ theme(legend.position = "none")
+```
+
+# Trophic Position Bar Graph
+```{r}
+#read CSV file
+traits <- read.csv("traits.csv")
+
+#select trophic position
+Trophic_position <- traits %>% select(ScientificName_accepted, Trophic.position)
+
+# Separate rows by ';'
+Trophic_position2 <- Trophic_position %>% 
+  separate_rows(Trophic.position, sep = ";") %>%  
+  mutate(Trophic.position = trimws(Trophic.position))
+  
+# column names check
+colnames(Trophic_position2)
+
+# number in each category
+Trophic_position_plot_data <- Trophic_position2 %>%
+  count(Trophic.position, name = "Number") %>%
+  arrange(desc(Number))
+
+# column names
+colnames(Trophic_position2) <- c("Trophic.position", "Number")
+
+# Replace blanks with "No Data"
+Trophic_position_plot_data <- Trophic_position_plot_data %>%
+  mutate(Trophic.position = ifelse(Trophic.position == "" | is.na(Trophic.position), "no data", Trophic.position))
+
+# Create the bar chart
+ggplot(Trophic_position_plot_data, aes(x = reorder(Trophic.position, -Number), y = Number, fill = Trophic.position)) +
+  geom_bar(stat = "identity", color = "black") +
+  scale_fill_manual(
+    values = c("Carnivore" = "#243E36", 
+               "Omnivore" = "#7CA982",
+               "Saprophagous" = "#99B245")
+  ) +
+  labs(
+    x = "Trophic Position",
+    y = "Number of Species",
+    title = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),  
+    legend.position = "none"
+  ) +
+  plottheme+ theme(legend.position = "none")
+```
+
+# Lifespan Bar Plot
+```{r}
+#read CSV 
+traits <- read.csv("traits.csv")
+
+#select lifespan
+Lifespan <- traits %>% select(ScientificName_accepted, Life.span)
+
+# Separate rows by ';'
+Lifespan2 <- Lifespan %>% 
+  separate_rows(Life.span, sep = ";") %>% 
+  mutate(Life.span = trimws(Life.span))
+  
+# column names check
+colnames(Lifespan2)
+
+# number in each category
+Lifespan_plot_data <- Lifespan2 %>%
+  count(Life.span, name = "Number") %>%
+  arrange(desc(Number))
+
+# column names
+colnames(Lifespan2) <- c("Lifespan", "Number")
+
+# Replace blanks with "No Data"
+Lifespan_plot_data <- Lifespan_plot_data %>%
+  mutate(Life.span = ifelse(Life.span == "" | is.na(Life.span), "no data", Life.span))
+
+# Create the bar chart
+ggplot(Lifespan_plot_data, aes(x = reorder(Life.span, -Number), y = Number, fill = Life.span)) +
+  geom_bar(stat = "identity", color = "black") +
+  scale_fill_manual(
+    values = c("Medium-short" = "#243E36", 
+               "Medium" = "#7CA982",
+               "Medium-long" = "#99B245",
+               "no data" = "#998459")
+  ) +
+  labs(
+    x = "Lifespan",
+    y = "Number of Species",
+    title = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),  
+    legend.position = "none"
+  ) +
+  plottheme+ theme(legend.position = "none")
+```
+
+Sociability Bar Plot
+```{r}
+#read CSV file
+traits <- read.csv("traits.csv")
+
+#select Sociability
+Sociability <- traits %>% select(ScientificName_accepted, Sociability)
+
+# Separate rows by ';'
+Sociability2 <- Sociability %>% 
+  separate_rows(Sociability, sep = ";") %>% 
+  mutate(Sociability = trimws(Sociability))
+  
+# column names check
+colnames(Sociability2)
+
+# number in each category
+Sociability_plot_data <- Sociability2 %>%
+  count(Sociability, name = "Number") %>%
+  arrange(desc(Number))
+
+# Replace blanks with "No Data"
+Sociability_plot_data <- Sociability_plot_data %>%
+  mutate(Sociability = ifelse(Sociability == "" | is.na(Sociability), "no data", 
+                              Sociability))
+
+# Create the bar chart
+ggplot(Sociability_plot_data, aes(x = reorder(Sociability, -Number), y = Number, fill = Sociability)) +
+  geom_bar(stat = "identity", color = "black") +
+  scale_fill_manual(
+    values = c(
+      "Gregarious" = "#243E36", 
+      "Solitary" = "#7CA982",
+      "no data" = "#99B245"    )
+  ) +
+  labs(
+    x = "Sociability",
+    y = "Number of Species",
+    title = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),  
+    legend.position = "none"
+  ) +
+  plottheme+ theme(legend.position = "none")
+```
+
+# Diel Activity Pattern Bar Graph
+```{r}
+#read CSV file
+traits <- read.csv("traits.csv")
+
+#select Diel Activity Pattern
+Diel_activity_pattern <- traits %>% select(ScientificName_accepted, Diel.activity.pattern)
+
+# Separate rows by ';'
+Diel_activity_pattern2 <- Diel_activity_pattern %>% 
+  separate_rows(Diel.activity.pattern, sep = ";") %>% 
+  mutate(Diel.activity.pattern = trimws(Diel.activity.pattern))
+  
+# column names check
+colnames(Diel_activity_pattern2)
+
+# number in each category
+Diel_activity_pattern_plot_data <- Diel_activity_pattern2 %>%
+  count(Diel.activity.pattern, name = "Number") %>%
+  arrange(desc(Number))
+
+# Replace blanks with "No Data"
+Diel_activity_pattern_plot_data <- Diel_activity_pattern_plot_data %>%
+  mutate(Diel.activity.pattern = ifelse(Diel.activity.pattern == "" | is.na(Diel.activity.pattern), "no data", 
+                              Diel.activity.pattern))
+
+# Create the bar chart
+ggplot(Diel_activity_pattern_plot_data, aes(x = reorder(Diel.activity.pattern, -Number), y = Number, fill = Diel.activity.pattern)) +
+  geom_bar(stat = "identity", color = "black") +
+  scale_fill_manual(
+    values = c(
+      "Diurnal" = "#243E36", 
+      "Nocturnal" = "#7CA982",
+      "no data" = "#99B245"    )
+  ) +
+  labs(
+    x = "Diel Activity Pattern",
+    y = "Number of Species",
+    title = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),  
+    legend.position = "none"
+  ) +
+  plottheme+ theme(legend.position = "none")
+```
+
+# Age at Sexual Maturity Continuous Plot
+```{r}
+library(ggplot2)
+
+traits<-read.csv("traits.csv")
+
+# filter out sexual maturity size
+Sex.mat <- traits %>% select(ScientificName_accepted, Age.at.sexual.maturity) %>% 
+  drop_na()
+
+#change n/a to blank
+Sex.mat$Age.at.sexual.maturity[Sex.mat$Age.at.sexual.maturity == "n/a"] <- ""
+
+#convert to numeric
+Sex.mat <- Sex.mat %>%
+  mutate(Age.at.sexual.maturity = as.numeric(Age.at.sexual.maturity))
+
+# add a body size column
+Sex.mat$trait <- "Age.at.sexual.maturity"
+
+## Create the plot
+ggplot(Sex.mat, aes(x = Age.at.sexual.maturity, fill = trait)) + 
+  geom_density(alpha = 0.4) + ## plot the density with transparency of 0.4
+  labs(x = "Age at Sexual Maturity (yrs)", y = "Density")+
+  plottheme+ theme(legend.position = "none")
+
+
+```
+
+
