@@ -6,7 +6,7 @@ This repository shows the R code and data from a Directed Studies project on the
 `TraitORS_data.Rmd` The R Markdown file that displays the code used. 
 
 ## Data
-`traits.csv` is the raw data file used for all analyses. 
+`traits.csv` is the raw data file used for all figures and analysis. 
 
 ### Contact
 Questions about this repository can be emailed to **Kamilla Hindmarch** kamillahindmarch@gmail.com
